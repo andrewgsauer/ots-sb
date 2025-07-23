@@ -1,0 +1,14 @@
+version: "3.8"
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.local
+    restart: always
+    environment:
+      # In-memory storage for simple local testing
+      STORAGE_TYPE: mem
+      # 1 hour default expiry for testing
+      SECRET_EXPIRY: "3600"
+    ports:
+      - 3000:3000

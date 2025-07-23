@@ -1,21 +1,17 @@
 <template>
-  <nav class="navbar navbar-expand-lg bg-primary-subtle">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-black">
     <div class="container-fluid">
       <a
         class="navbar-brand"
         href="#"
         @click.prevent="$emit('navigate', '/')"
       >
-        <i
-          v-if="!appIcon"
-          class="fas fa-user-secret me-1"
-        />
         <img
-          v-else
-          class="me-1"
-          :src="appIcon"
+          class="me-1 navbar-logo"
+          src="/images/darkmode.png"
+          alt="Pickup"
         >
-        <span v-if="!customize.disableAppTitle">{{ customize.appTitle }}</span>
+        <span v-if="!customize.disableAppTitle">Pickup</span>
       </a>
 
       <button
@@ -44,11 +40,14 @@
               <i class="fas fa-circle-info" /> {{ $t('btn-show-explanation') }}
             </a>
           </li>
-          <li class="nav-item">
+          <li 
+            v-if="showCreateButton"
+            class="nav-item"
+          >
             <a
               class="nav-link"
               href="#"
-              @click.prevent="$emit('navigate', '/')"
+              @click.prevent="$emit('navigate', '/create')"
             >
               <i class="fas fa-plus" /> {{ $t('btn-new-secret') }}
             </a>
@@ -124,6 +123,11 @@ export default defineComponent({
 
     customize(): any {
       return this.$parent.customize || {}
+    },
+    
+    showCreateButton(): boolean {
+      // Only show create button on the /create page
+      return this.$route.path === '/create'
     },
   },
 

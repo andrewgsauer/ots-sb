@@ -1,15 +1,21 @@
-import { createMemoryHistory, createRouter } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 
 import AppCreate from './components/create.vue'
 import AppDisplayURL from './components/display-url.vue'
 import AppExplanation from './components/explanation.vue'
+import AppLanding from './components/landing.vue'
 import AppSecretDisplay from './components/secret-display.vue'
 
 const routes = [
   {
+    component: AppLanding,
+    name: 'landing',
+    path: '/',
+  },
+  {
     component: AppCreate,
     name: 'create',
-    path: '/',
+    path: '/create',
   },
   {
     component: AppDisplayURL,
@@ -29,7 +35,7 @@ const routes = [
   {
     component: AppSecretDisplay,
     name: 'secret',
-    path: '/secret',
+    path: '/pickup',
     props: route => ({
       secretId: route.query.secretId,
       securePassword: route.query.securePassword,
@@ -38,7 +44,7 @@ const routes = [
 ]
 
 const router = createRouter({
-  history: createMemoryHistory(),
+  history: createWebHistory(),
   routes,
 })
 

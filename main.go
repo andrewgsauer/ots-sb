@@ -132,9 +132,18 @@ func main() {
 			return requestInSubnetList(r, cust.MetricsAllowedSubnets)
 		})
 
-	r.HandleFunc("/", handleIndex).
+	// Serve static assets (JS, CSS, images, etc.)
+	r.PathPrefix("/images/").HandlerFunc(assetDelivery).
 		Methods(http.MethodGet)
-	r.PathPrefix("/").HandlerFunc(assetDelivery).
+	r.PathPrefix("/app.").HandlerFunc(assetDelivery).
+		Methods(http.MethodGet)
+	r.PathPrefix("/api.html").HandlerFunc(assetDelivery).
+		Methods(http.MethodGet)
+	r.PathPrefix("/fa-").HandlerFunc(assetDelivery).
+		Methods(http.MethodGet)
+	
+	// Serve index.html for all other routes (client-side routing)
+	r.PathPrefix("/").HandlerFunc(handleIndex).
 		Methods(http.MethodGet)
 
 	var hdl http.Handler = r

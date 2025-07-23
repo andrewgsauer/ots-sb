@@ -29,24 +29,40 @@
       </div>
 
       <div
-        class="row mt-4"
+        class="row mt-4 footer-row"
       >
-        <div class="col form-text text-center">
-          <span
-            v-if="!customize.disablePoweredBy"
-            class="mx-2"
-          >
-            {{ $t('text-powered-by') }}
-            <a href="https://github.com/Luzifer/ots"><i class="fab fa-github" /> OTS</a>
-            {{ version }}
-          </span>
-          <span
-            v-for="link in customize.footerLinks"
-            :key="link.url"
-            class="mx-2"
-          >
-            <a :href="link.url">{{ link.name }}</a>
-          </span>
+        <div class="col text-center py-3">
+          <div class="disclaimer-text mb-3">
+            <p class="mb-2">
+              <strong>Do not upload Controlled Unclassified Information (CUI), Protected Health Information (PHI), Payment Card Industry (PCI) data, or any other regulated or sensitive government or client data.</strong>
+            </p>
+            <p class="mb-2">
+              This system is designed to protect the confidentiality of uploaded information using end-to-end encryption. However, Sentinel Blue makes no warranties or guarantees, expressed or implied, regarding the security, confidentiality, integrity, or availability of the data submitted through this system.
+            </p>
+            <p class="mb-0">
+              Use of this system is at your own risk. By proceeding, you acknowledge and accept that Sentinel Blue shall not be held liable for any loss, breach, or unauthorized disclosure of information. This tool is intended for general-purpose secure sharing and should not be used for transmitting any information subject to regulatory or contractual confidentiality requirements.
+            </p>
+          </div>
+          <div class="footer-content d-flex align-items-center justify-content-center">
+            <img
+              :src="footerLogo"
+              alt="Sentinel Blue"
+              class="footer-logo me-3"
+            >
+            <span
+              v-if="!customize.disablePoweredBy"
+              class="mx-2"
+            >
+              Pickup by Sentinel Blue
+            </span>
+            <span
+              v-for="link in customize.footerLinks"
+              :key="link.url"
+              class="mx-2"
+            >
+              <a :href="link.url">{{ link.name }}</a>
+            </span>
+          </div>
         </div>
       </div>
     </div>
@@ -63,6 +79,10 @@ export default defineComponent({
   components: { AppNavbar },
 
   computed: {
+    footerLogo(): string {
+      return this.theme === 'dark' ? 'images/darkmode.png' : 'images/lightmode.png'
+    },
+
     isSecureEnvironment(): boolean {
       return Boolean(window.crypto.subtle)
     },
@@ -73,7 +93,11 @@ export default defineComponent({
   },
 
   created() {
-    this.navigate('/')
+    // Don't navigate away from current route
+    // Only navigate if we have a hash (legacy URL)
+    if (window.location.hash) {
+      this.hashLoad()
+    }
   },
 
   data() {
@@ -105,7 +129,7 @@ export default defineComponent({
       }
 
       this.navigate({
-        path: '/secret',
+        path: '/pickup',
         query: {
           secretId,
           securePassword,
@@ -131,7 +155,7 @@ export default defineComponent({
     this.customize = window.OTSCustomize
 
     window.onhashchange = this.hashLoad
-    this.hashLoad()
+    // Don't call hashLoad here - already handled in created() if needed
 
     if (!this.isSecureEnvironment) {
       this.error = this.$t('alert-insecure-environment')
@@ -142,6 +166,12 @@ export default defineComponent({
       .addEventListener('change', () => {
         window.refreshTheme()
       })
+    
+    // Set background image
+    const app = document.getElementById('app')
+    if (app) {
+      app.style.backgroundImage = 'url(/images/background.png)'
+    }
   },
 
   name: 'App',

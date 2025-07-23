@@ -1,0 +1,34 @@
+version: "3.8"
+services:
+  app:
+    build:
+      context: .
+    restart: always
+    environment:
+      # Azure-specific configuration
+      CUSTOMIZE: '/etc/ots/customize.yaml'
+      # Use Redis for production
+      REDIS_URL: redis://redis:6379/0
+      # 168h = 1w (7 days)
+      SECRET_EXPIRY: "604800"
+      # Redis storage for production
+      STORAGE_TYPE: redis
+      # Optional: Set a custom port if needed
+      # PORT: 3000
+    depends_on:
+      - redis
+    ports:
+      - 80:3000
+    volumes:
+      - ./customize.yaml:/etc/ots/customize.yaml:ro
+  
+  redis:
+    image: redis:alpine
+    restart: always
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes --appendfsync everysec
+
+volumes:
+  redis-data:
+    driver: local

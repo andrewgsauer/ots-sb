@@ -1,4 +1,4 @@
-FROM golang:1.24.5-alpine@sha256:daae04ebad0c21149979cd8e9db38f565ecefd8547cf4a591240dc1972cf1399 AS builder
+FROM golang:1.24.5-alpine AS builder
 
 ENV CGO_ENABLED=0 \
     GOPATH=/go \
@@ -7,7 +7,10 @@ ENV CGO_ENABLED=0 \
 COPY . /go/src/github.com/Luzifer/ots
 WORKDIR /go/src/github.com/Luzifer/ots
 
+# Skip SSL verification for Alpine packages (only for local testing!)
 RUN set -ex \
+ && echo "http://dl-cdn.alpinelinux.org/alpine/v3.19/main" > /etc/apk/repositories \
+ && echo "http://dl-cdn.alpinelinux.org/alpine/v3.19/community" >> /etc/apk/repositories \
  && apk --no-cache add \
       curl \
       git \
@@ -22,7 +25,7 @@ RUN set -ex \
       -mod=readonly
 
 
-FROM alpine:3.22@sha256:4bcff63911fcb4448bd4fdacec207030997caf25e9bea4045fa6c8c44de311d1
+FROM alpine:3.19
 
 LABEL org.opencontainers.image.authors='Sentinel Blue' \
     org.opencontainers.image.version='1.0.0' \
@@ -31,9 +34,11 @@ LABEL org.opencontainers.image.authors='Sentinel Blue' \
     org.opencontainers.image.source='https://sentinelblue.com' \
     org.opencontainers.image.licenses='Apache-2.0'
 
+# Use HTTP instead of HTTPS for Alpine packages (only for local testing!)
 RUN set -ex \
- && apk --no-cache add \
-      ca-certificates
+ && echo "http://dl-cdn.alpinelinux.org/alpine/v3.19/main" > /etc/apk/repositories \
+ && echo "http://dl-cdn.alpinelinux.org/alpine/v3.19/community" >> /etc/apk/repositories \
+ && apk --no-cache add ca-certificates
 
 COPY --from=builder /go/bin/ots /usr/local/bin/ots
 
@@ -43,5 +48,3 @@ USER 1000:1000
 
 ENTRYPOINT ["/usr/local/bin/ots"]
 CMD ["--"]
-
-# vim: set ft=Dockerfile:

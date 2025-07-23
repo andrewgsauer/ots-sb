@@ -91,7 +91,7 @@ func (c Customize) ToJSON() (string, error) {
 
 func (c *Customize) applyFixes() {
 	if len(c.AppTitle) == 0 {
-		c.AppTitle = "OTS - One Time Secrets"
+		c.AppTitle = "Pickup"
 	}
 
 	if c.MaxSecretSize == 0 {
