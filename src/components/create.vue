@@ -319,11 +319,14 @@ export default defineComponent({
 
               resp.json()
                 .then(data => {
-                  this.$emit('navigate', {
+                  // Use router directly to pass password in state (not in URL)
+                  this.$router.push({
                     path: '/display-secret-url',
                     query: {
                       expiresAt: data.expires_at,
                       secretId: data.secret_id,
+                    },
+                    state: {
                       securePassword: this.securePassword,
                     },
                   })

@@ -24,7 +24,6 @@ const routes = [
     props: route => ({
       expiresAt: route.query.expiresAt ? new Date(route.query.expiresAt) : null,
       secretId: route.query.secretId,
-      securePassword: route.query.securePassword,
     }),
   },
   {
@@ -38,7 +37,6 @@ const routes = [
     path: '/pickup',
     props: route => ({
       secretId: route.query.secretId,
-      securePassword: route.query.securePassword,
     }),
   },
 ]

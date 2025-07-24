@@ -93,11 +93,7 @@ export default defineComponent({
   },
 
   created() {
-    // Don't navigate away from current route
-    // Only navigate if we have a hash (legacy URL)
-    if (window.location.hash) {
-      this.hashLoad()
-    }
+    // Don't do anything in created - let the current route stay
   },
 
   data() {
@@ -128,10 +124,13 @@ export default defineComponent({
         securePassword = parts[1]
       }
 
-      this.navigate({
+      // Use router directly to pass password in state (not in URL)
+      this.$router.push({
         path: '/pickup',
         query: {
           secretId,
+        },
+        state: {
           securePassword,
         },
       })
@@ -155,7 +154,11 @@ export default defineComponent({
     this.customize = window.OTSCustomize
 
     window.onhashchange = this.hashLoad
-    // Don't call hashLoad here - already handled in created() if needed
+    
+    // Only process hash if we're at the root and have a hash
+    if (window.location.pathname === '/' && window.location.hash) {
+      this.hashLoad()
+    }
 
     if (!this.isSecureEnvironment) {
       this.error = this.$t('alert-insecure-environment')

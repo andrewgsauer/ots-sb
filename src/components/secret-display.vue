@@ -75,15 +75,6 @@ import OTSMeta from '../ots-meta'
 export default defineComponent({
   components: { FilesDisplay, GrowArea, appClipboardButton, appQrButton },
 
-  data() {
-    return {
-      files: [],
-      popover: null,
-      secret: null,
-      secretContentBlobURL: null,
-      secretLoading: false,
-    }
-  },
 
   emits: ['error'],
 
@@ -145,17 +136,28 @@ export default defineComponent({
   },
 
   name: 'AppSecretDisplay',
+  data() {
+    return {
+      files: [],
+      popover: null,
+      secret: null,
+      secretContentBlobURL: null,
+      secretLoading: false,
+      securePassword: null,
+    }
+  },
+
   props: {
     secretId: {
       required: true,
       type: String,
     },
-
-    securePassword: {
-      default: null,
-      required: false,
-      type: String,
-    },
+  },
+  
+  created() {
+    // The password comes from the hash routing done by app.vue
+    // It will be in history state if navigated internally
+    this.securePassword = window.history.state?.securePassword || null
   },
 
   watch: {

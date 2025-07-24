@@ -57,8 +57,10 @@ export default defineComponent({
 
   computed: {
     secretUrl(): string {
+      // Generate the shareable URL with ONLY the hash fragment
+      // Format: baseURL#secretId|password
       return [
-        window.location.href.split('#')[0],
+        window.location.origin + '/',
         encodeURIComponent([
           this.secretId,
           this.securePassword,
@@ -71,6 +73,7 @@ export default defineComponent({
     return {
       burned: false,
       popover: null,
+      securePassword: '',
     }
   },
 
@@ -105,11 +108,11 @@ export default defineComponent({
       required: true,
       type: String,
     },
-
-    securePassword: {
-      required: true,
-      type: String,
-    },
+  },
+  
+  created() {
+    // Get password from navigation state (not in URL)
+    this.securePassword = window.history.state?.securePassword || ''
   },
 })
 </script>
